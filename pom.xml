@@ -16,7 +16,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <gwtVersion>2.9.0</gwtVersion>
     <serverPort>8080</serverPort>
   </properties>
@@ -34,7 +34,7 @@
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-web</artifactId>   
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -130,7 +130,11 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <jvmArguments>-Dserver.port=${serverPort}</jvmArguments>
-          <excludeGroupIds>org.eclipse.jetty,com.google.gwt,org.dominokit,com.github.tdesjardins,org.gwtproject.i18n,org.jboss.gwt.elemento,com.google.elemental2,org.gwtproject.editor,org.gwtproject.event,org.gwtproject.core,org.gwtproject.safehtml,org.gwtproject.timer,com.google.jsinterop,com.google.code.findbugs,com.google.code.gson,org.ow2.asm,org.ow2,com.ibm.icu</excludeGroupIds>
+          <!-- Das ist leider nur Symptombekämpfung. Wie organisiere ich das Projekt, damit die GWT-Geschichten (die nur im Client verwendet werden) nicht im Jar landen? -->
+          <!-- com.google.gwt braucht es, falls rpc verwendet wird. -->
+          <!-- Falls auf Serverseite Libraries benötigt werden, die hier gelistet sind, müssen sie "unlisted" werden. -->
+          <!-- Und mvn dependency:tree die transitiven Abhängigkeiten anzeigen lassen. -->
+          <excludeGroupIds>org.eclipse.jetty,com.google.gwt,org.dominokit,com.github.tdesjardins,org.gwtproject.i18n,org.jboss.gwt.elemento,com.google.elemental2,org.gwtproject.editor,org.gwtproject.event,org.gwtproject.core,org.gwtproject.safehtml,org.gwtproject.timer,com.google.jsinterop,com.google.code.findbugs,com.google.code.gson,org.ow2.asm,org.ow2,com.ibm.icu,net.sourceforge.htmlunit,xerces,org.brotli,com.shapesecurity,xalan,org.jboss.elemento,colt,ant,org.apache.httpcomponents,tapestry,javax.annotation,org.mortbay.jasper,org.locationtech.jts,org.apache.commons,org.apache.httpcomponents,commons-codec,xml-apis,commons-net</excludeGroupIds>
           <excludes>
             <exclude>
               <groupId>org.eclipse.jetty</groupId>
@@ -164,34 +168,6 @@
           <launcherDir>${project.build.directory}/classes/public</launcherDir>
           <webappDirectory>${project.build.directory}/classes/public</webappDirectory>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
-        <executions>
-          <execution>
-            <id>docker-package</id>
-            <phase>package</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>docker</executable>
-              <workingDirectory>${project.basedir}</workingDirectory>
-              <arguments>
-                <argument>build</argument>
-                <argument>.</argument>
-                <argument>-t</argument>
-                <argument>sogis/standortkarte:2.0.${env.BUILD_NUMBER}</argument>
-                <argument>-t</argument>
-                <argument>sogis/standortkarte:latest</argument>
-                <argument>--build-arg</argument>
-                <argument>JAR_FILE=target/standortkarte-${project.version}.jar</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

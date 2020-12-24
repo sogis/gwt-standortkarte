@@ -25,9 +25,13 @@ BUILD_NUMBER=9999 mvn clean package -nsu
 mvn dependency:tree
 ```
 
+```
+docker build -t sogis/standortkarte .
+```
+
+
 ## run
 ```
 docker run -p 8080:8080 sogis/standortkarte
 ```
 
-## smaller jvm
