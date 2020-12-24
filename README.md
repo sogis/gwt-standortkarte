@@ -26,7 +26,7 @@ mvn dependency:tree
 ```
 
 ```
-docker build -t sogis/standortkarte .
+docker build -t sogis/standortkarte -f Dockerfile.layered .
 ```
 
 
