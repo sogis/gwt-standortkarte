@@ -29,9 +29,6 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.Text;
 import com.google.gwt.xml.client.XMLParser;
 
-import ch.so.agi.standortkarte.shared.SettingsResponse;
-import ch.so.agi.standortkarte.shared.SettingsService;
-import ch.so.agi.standortkarte.shared.SettingsServiceAsync;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Element;
 import elemental2.dom.EventListener;
@@ -47,7 +44,6 @@ import ol.events.Event;
 
 public class AppEntryPoint implements EntryPoint {
     private MyMessages messages = GWT.create(MyMessages.class);
-    private final SettingsServiceAsync settingsService = GWT.create(SettingsService.class);
     
     // Application settings
     private String myVar;
@@ -57,20 +53,9 @@ public class AppEntryPoint implements EntryPoint {
     private NumberFormat fmtPercent = NumberFormat.getFormat("#0.0");
         
     public void onModuleLoad() {
-        settingsService.settingsServer(new AsyncCallback<SettingsResponse>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                console.error(caught.getMessage());
-                DomGlobal.window.alert(caught.getMessage());
-            }
-
-            @Override
-            public void onSuccess(SettingsResponse result) {
-                myVar = (String) result.getSettings().get("MY_VAR");
-                console.log("myVar="+myVar);
-                init();
-            }
-        });
+        // fetch settings
+        
+        init();
     }
 
     @SuppressWarnings("unchecked")

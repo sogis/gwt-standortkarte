@@ -16,7 +16,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>11</java.version>
+    <java.version>1.8</java.version>
     <gwtVersion>2.9.0</gwtVersion>
     <serverPort>8080</serverPort>
   </properties>
@@ -130,7 +130,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <jvmArguments>-Dserver.port=${serverPort}</jvmArguments>
-          <!--<excludeGroupIds>org.eclipse.jetty,com.google.gwt,org.dominokit,com.github.tdesjardins,org.gwtproject.i18n,org.jboss.gwt.elemento,com.google.elemental2,org.gwtproject.editor,org.gwtproject.event,org.gwtproject.core,org.gwtproject.safehtml,org.gwtproject.timer</excludeGroupIds>-->
+          <excludeGroupIds>org.eclipse.jetty,com.google.gwt,org.dominokit,com.github.tdesjardins,org.gwtproject.i18n,org.jboss.gwt.elemento,com.google.elemental2,org.gwtproject.editor,org.gwtproject.event,org.gwtproject.core,org.gwtproject.safehtml,org.gwtproject.timer,com.google.jsinterop,com.google.code.findbugs,com.google.code.gson,org.ow2.asm,org.ow2,com.ibm.icu</excludeGroupIds>
           <excludes>
             <exclude>
               <groupId>org.eclipse.jetty</groupId>

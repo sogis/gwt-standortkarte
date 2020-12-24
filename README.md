@@ -16,3 +16,18 @@ Or simple devmode (which worked better for java.xml.bind on client side):
 ```
 mvn gwt:generate-module gwt:devmode 
 ``` 
+
+```
+BUILD_NUMBER=9999 mvn clean package -nsu
+```
+
+```
+mvn dependency:tree
+```
+
+## run
+```
+docker run -p 8080:8080 sogis/standortkarte
+```
+
+## smaller jvm
