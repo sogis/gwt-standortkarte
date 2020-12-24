@@ -1,0 +1,13 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    background: #fafafa; 
+}
+
+body, div {
+    font-family: 'Fira Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;   
+}
+
+#map {
+    height: 100%;
+}

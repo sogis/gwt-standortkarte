@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.7.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/2.7.0/distro-source/core/src/gwt-module.dtd">-->
+<module rename-to="module1">
+	
+    <inherits name='com.google.gwt.user.User' />
+    <inherits name="com.google.gwt.json.JSON" />
+    <inherits name="com.google.gwt.i18n.I18N"/>
+    <inherits name="com.google.gwt.xml.XML" />
+
+    <extend-property name="locale" values="de_CH"/>
+    <set-property name="locale" value="de_CH" />
+	
+    <inherits name="org.dominokit.domino.ui.DominoUI"/>
+    <inherits name="ol.GwtOL"/>
+    <inherits name="proj4.GwtProj4"/>
+	
+    <!-- 
+    <inherits name='com.google.gwt.user.theme.clean.Clean'/> 
+    -->
+     
+    <source path="client" />
+    <source path="shared" />
+    <entry-point class='ch.so.agi.standortkarte.client.AppEntryPoint' />
+ 
+    <inherits name="com.google.gwt.core.Core" />
+    <add-linker name="direct_install" />
+
+</module>
