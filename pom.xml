@@ -6,7 +6,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>standortkarte</name>
-  <description>gwt skeleton canton solothurn</description>
+  <description>standortkarte canton solothurn</description>
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -151,7 +151,7 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <moduleName>ch.so.agi.module1</moduleName>
+              <moduleName>ch.so.agi.standortkarte.module1</moduleName>
               <failOnError>true</failOnError>
               <launcherDir>${project.build.directory}/classes/public</launcherDir>
               <webappDirectory>${project.build.directory}/classes/public</webappDirectory>
@@ -159,7 +159,7 @@
           </execution>
         </executions>
         <configuration>
-          <moduleName>ch.so.agi.module1</moduleName>
+          <moduleName>ch.so.agi.standortkarte.module1</moduleName>
           <failOnError>true</failOnError>
           <launcherDir>${project.build.directory}/classes/public</launcherDir>
           <webappDirectory>${project.build.directory}/classes/public</webappDirectory>
@@ -183,11 +183,11 @@
                 <argument>build</argument>
                 <argument>.</argument>
                 <argument>-t</argument>
-                <argument>sogis/gwt-skeleton:1.0.${env.BUILD_NUMBER}</argument>
+                <argument>sogis/standortkarte:2.0.${env.BUILD_NUMBER}</argument>
                 <argument>-t</argument>
-                <argument>sogis/wgc-embedded:latest</argument>
+                <argument>sogis/standortkarte:latest</argument>
                 <argument>--build-arg</argument>
-                <argument>JAR_FILE=target/gwt-skeleton-${project.version}.jar</argument>
+                <argument>JAR_FILE=target/standortkarte-${project.version}.jar</argument>
               </arguments>
             </configuration>
           </execution>
