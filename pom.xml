@@ -1,174 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>ch.so.agi</groupId>
   <artifactId>standortkarte</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <name>standortkarte</name>
-  <description>standortkarte canton solothurn</description>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.4.1</version>
-    <!-- lookup parent from repository -->
-  </parent>
+  <packaging>pom</packaging>
+
   <properties>
+    <spring-boot.version>2.4.1</spring-boot.version>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <java.version>11</java.version>
-    <gwtVersion>2.9.0</gwtVersion>
-    <serverPort>8080</serverPort>
   </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt</artifactId>
-        <version>${gwtVersion}</version>
+        <version>2.9.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>   
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-      <version>${gwtVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-      <version>${gwtVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.dominokit</groupId>
-      <artifactId>domino-ui</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.dominokit</groupId>
-      <artifactId>domino-ui</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>com.github.tdesjardins</groupId>
-      <artifactId>gwt-ol3</artifactId>
-      <version>7.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-core</artifactId>
-      <version>1.16.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-io</artifactId>
-      <version>1.16.1</version>
-      <type>pom</type>
-    </dependency>
-  </dependencies>
-  <repositories>
-    <repository>
-      <id>sonatype-snapshots-repo</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>vertispan-snapshots</id>
-      <name>Vertispan Snapshots</name>
-      <url>https://repo.vertispan.com/gwt-snapshot/</url>
-      <snapshots>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </snapshots>
-    </repository>
-  </repositories>
+
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <classpathDependencyExcludes>
-            <classpathDependencyExclude>org.eclipse.jetty:jetty-server</classpathDependencyExclude>
-          </classpathDependencyExcludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/gwt-unitCache/*</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <jvmArguments>-Dserver.port=${serverPort}</jvmArguments>
-          <!-- Das ist leider nur Symptombekämpfung. Wie organisiere ich das Projekt, damit die GWT-Geschichten (die nur im Client verwendet werden) nicht im Jar landen? -->
-          <!-- com.google.gwt braucht es, falls rpc verwendet wird. -->
-          <!-- Falls auf Serverseite Libraries benötigt werden, die hier gelistet sind, müssen sie "unlisted" werden. -->
-          <!-- Und mvn dependency:tree die transitiven Abhängigkeiten anzeigen lassen. -->
-          <excludeGroupIds>org.eclipse.jetty,com.google.gwt,org.dominokit,com.github.tdesjardins,org.gwtproject.i18n,org.jboss.gwt.elemento,com.google.elemental2,org.gwtproject.editor,org.gwtproject.event,org.gwtproject.core,org.gwtproject.safehtml,org.gwtproject.timer,com.google.jsinterop,com.google.code.findbugs,com.google.code.gson,org.ow2.asm,org.ow2,com.ibm.icu,net.sourceforge.htmlunit,xerces,org.brotli,com.shapesecurity,xalan,org.jboss.elemento,colt,ant,org.apache.httpcomponents,tapestry,javax.annotation,org.mortbay.jasper,org.locationtech.jts,org.apache.commons,org.apache.httpcomponents,commons-codec,xml-apis,commons-net</excludeGroupIds>
-          <excludes>
-            <exclude>
-              <groupId>org.eclipse.jetty</groupId>
-              <artifactId>jetty-server</artifactId>
-            </exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>net.ltgt.gwt.maven</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>1.0-rc-10</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate-module</goal>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <moduleName>ch.so.agi.standortkarte.module1</moduleName>
-              <failOnError>true</failOnError>
-              <launcherDir>${project.build.directory}/classes/public</launcherDir>
-              <webappDirectory>${project.build.directory}/classes/public</webappDirectory>
-            </configuration>
-          </execution>
-        </executions>
+        <inherited>false</inherited>
         <configuration>
-          <moduleName>ch.so.agi.standortkarte.module1</moduleName>
-          <failOnError>true</failOnError>
-          <launcherDir>${project.build.directory}/classes/public</launcherDir>
-          <webappDirectory>${project.build.directory}/classes/public</webappDirectory>
+          <launcherDir>${basedir}/standortkarte-server/target/classes/launcherDir/</launcherDir>
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <source>11</source>
+            <target>11</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>net.ltgt.gwt.maven</groupId>
+          <artifactId>gwt-maven-plugin</artifactId>
+          <version>1.0.0</version>
+          <extensions>true</extensions>
+          <configuration>
+            <sourceLevel>11</sourceLevel>
+            <failOnError>true</failOnError>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.2.1</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot.version}</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+  <modules>
+    <module>standortkarte-client</module>
+    <module>standortkarte-shared</module>
+    <module>standortkarte-server</module>
+  </modules>
 </project>
