@@ -1,59 +1,37 @@
 <!doctype html>
-<!-- The DOCTYPE declaration above will set the     -->
-<!-- browser's rendering engine into                -->
-<!-- "Standards Mode". Replacing this declaration   -->
-<!-- with a "Quirks Mode" doctype is not supported. -->
-
 <html>
   <head>
-    <meta charset=UTF-8>
+    <title>Web GIS Client • Kanton Solothurn</title>
 
-    <!--                                                               -->
-    <!-- Consider inlining CSS to reduce the number of requested files -->
-    <!--                                                               -->
-    <link type="text/css" rel="stylesheet" href="standortkarte.css">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="HandheldFriendly" content="true" />
 
-    <!--                                           -->
-    <!-- Any title is fine                         -->
-    <!--                                           -->
-    <title>Web Application Starter Project</title>
+    <script type="text/javascript" language="javascript" src="app/app.nocache.js"></script>    
+    <script type="text/javascript" src="//cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js"></script>    
+
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">    
     
-    <!--                                           -->
-    <!-- This script loads your compiled module.   -->
-    <!-- If you add any GWT meta tags, they must   -->
-    <!-- be added before this line.                -->
-    <!--                                           -->
-    <script src="app/app.nocache.js"></script>
+    <!--<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,600;0,800;1,400;1,600;1,800&display=swap">  -->
+    <link type="text/css" rel="stylesheet" href="//cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css">    
+    <link type="text/css" rel="stylesheet" href="app/css/domino-ui.css">
+    <link type="text/css" rel="stylesheet" href="app/css/themes/all-themes.css">
+    <link type="text/css" rel="stylesheet" href="standortkarte.css">
+    <link type="text/css" rel="stylesheet" href="fonts.css">    
   </head>
 
-  <!--                                           -->
-  <!-- The body can have arbitrary html, or      -->
-  <!-- you can leave the body empty if you want  -->
-  <!-- to create a completely dynamic UI.        -->
-  <!--                                           -->
-  <body>
-
-    <!-- RECOMMENDED if your web app will not function without JavaScript enabled -->
-    <noscript>
-      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+<body>
+  <noscript>
+    <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
         Your web browser must have JavaScript enabled
         in order for this application to display correctly.
-      </div>
-    </noscript>
-
-    <h1>Web Application Starter Project</h1>
-
-    <table align="center">
-      <tr>
-        <td colspan="2" style="font-weight:bold;">Please enter your name:</td>        
-      </tr>
-      <tr>
-        <td id="nameFieldContainer"></td>
-        <td id="sendButtonContainer"></td>
-      </tr>
-      <tr>
-        <td colspan="2" style="color:red;" id="errorLabelContainer"></td>
-      </tr>
-    </table>
-  </body>
+    </div>
+  </noscript>
+</body>
 </html>

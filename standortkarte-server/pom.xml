@@ -15,10 +15,12 @@
       <version>${project.version}</version>
     </dependency>
     <!-- only needed if you are using GWT-RPC -->
+    <!--
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
     </dependency>
+    -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>

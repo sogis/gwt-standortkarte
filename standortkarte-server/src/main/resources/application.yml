@@ -1,0 +1,36 @@
+# ========================
+# TOMCAT
+# ========================
+server:
+  tomcat:
+    additional-tld-skip-patterns: '*.jar'
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+# ========================
+# SPRING
+# ========================
+logging:
+  level:
+    org.springframework: INFO 
+
+spring:
+    resources:
+        static-locations: classpath:/launcherDir/,classpath:/public/
+    devtools:
+        restart:
+            additional-exclude: launcherDir/**
+
+# spring:
+#     profiles:
+#         active: test 
+
+# ========================
+# SPRING
+# ========================
+app:
+    myVar: ${VAR:defaultValue}
+
+

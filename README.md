@@ -11,6 +11,8 @@ With Java 11 there are empty lines in parent pom.xml. Use Java 8 to create empty
 
 For creating a fat jar we need to adjust the `env-prod` profile in the server module: Unpack gwt war and copy it into the public folder of the server module. But there is some build smell: https://stackoverflow.com/questions/30642630/artifact-has-not-been-packaged-yet
 
+Use application.yml instead of *.properties.
+
 ## develop
 
 First Terminal:
@@ -21,6 +23,7 @@ mvn spring-boot:run -pl *-server -am
 Second Terminal:
 ```
 mvn gwt:codeserver -pl *-client -am
+mvn gwt:codeserver -pl *-client -am -nsu
 ```
 
 
