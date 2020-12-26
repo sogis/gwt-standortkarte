@@ -4,6 +4,7 @@ import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.dominokit.domino.ui.style.Unit.px;
@@ -90,6 +91,10 @@ public class App implements EntryPoint {
                 Message msg = Js.cast(Global.JSON.parse(json));
                 Stream.of(msg.results).forEach(r -> DomGlobal.console.log(r.featureId));
 
+                
+                Optional<Result> result = Stream.of(msg.results).findFirst();
+                if (result.isPresent()) console.log(result.get().featureId);
+                
 //                JsPropertyMap<?> parsed = Js.cast(Global.JSON.parse(json));
 //                JsArray<?> results = Js.cast(parsed.get("results"));
 //                
