@@ -48,3 +48,7 @@ body, div {
 #suggestBoxDiv {
     padding: 20px;
 }
+
+.field-group input, .field-group textarea {
+    font-family: Frutiger, 'Fira Sans', sans-serif !important;   
+}

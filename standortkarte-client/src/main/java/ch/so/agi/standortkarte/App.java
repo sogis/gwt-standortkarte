@@ -42,9 +42,14 @@ import elemental2.core.Global;
 import elemental2.core.JsArray;
 import elemental2.core.JsNumber;
 import elemental2.core.JsString;
+import elemental2.dom.CustomEvent;
+import elemental2.dom.Document;
 import elemental2.dom.DomGlobal;
+import elemental2.dom.Event;
+import elemental2.dom.EventListener;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import elemental2.dom.Headers;
 import elemental2.dom.RequestInit;
 import jsinterop.annotations.JsPackage;
@@ -65,7 +70,6 @@ import ol.OverlayOptions;
 import ol.View;
 import ol.ViewOptions;
 import ol.control.Control;
-import ol.event.EventListener;
 import ol.format.GeoJson;
 import ol.format.Wkt;
 import ol.geom.Geometry;
@@ -107,7 +111,17 @@ public class App implements EntryPoint {
     private NumberFormat fmtDefault = NumberFormat.getDecimalFormat();
     private NumberFormat fmtPercent = NumberFormat.getFormat("#0.0");
 
+    private static final String EPSG_2056 = "EPSG:2056";
+    private static final String EPSG_4326 = "EPSG:4326";
+
     private String MAP_DIV_ID = "map";
+    
+    SearchBox searchBox;
+    
+    private double lonStart;
+    private double latStart;
+    private double lonFinish;    
+    private double latFinish;
 
     public void onModuleLoad() {
         // fetch settings form server
@@ -117,13 +131,42 @@ public class App implements EntryPoint {
 
     @SuppressWarnings("unchecked")
     private void init() {
+        // add LV95 
+        Proj4.defs(EPSG_2056, "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
+        ol.proj.Proj4.register(Proj4.get());
+
+        ProjectionOptions projectionOptions = OLFactory.createOptions();
+        projectionOptions.setCode(EPSG_2056);
+        projectionOptions.setUnits("m");
+        projectionOptions.setExtent(new Extent(2420000, 1030000, 2900000, 1350000));
+        Projection projection = new Projection(projectionOptions);
+        Projection.addProjection(projection);
+
+        // change theme
         Theme theme = new Theme(ColorScheme.WHITE);
         theme.apply();
-
-        body().add(div().id(MAP_DIV_ID));
+        
+        // add map div for ol3 map
+        HTMLElement mapElement = div().id(MAP_DIV_ID).element();
+        body().add(mapElement);
 
         Map map = MapPresets.getColorMap(MAP_DIV_ID);
 
+        // add searchbox
+        searchBox = new SearchBox(map);
+        
+        body().element().addEventListener("startingPointChanged", new EventListener() {
+            @Override
+            public void handleEvent(Event evt) {
+                CustomEvent customEvent = (CustomEvent) evt;
+                SearchResult result = (SearchResult) customEvent.detail;
+                console.log(result.getLon());
+            }
+        });
+        
+        body().add(searchBox);
+
+        // handle egrid from location parameter 
         if (Window.Location.getParameter("egid") != null) {
             String egid = Window.Location.getParameter("egid").toString();
 
@@ -167,8 +210,8 @@ public class App implements EntryPoint {
                     map.addOverlay(popup);
 
                     // add marker
-                    Point geom = new Point(new Coordinate(easting, northing));
-
+                    Point geom = new Point(new Coordinate(easting, northing));                    
+                    
                     FeatureOptions featureOptions = OLFactory.createOptions();
                     featureOptions.setGeometry(geom);
 
@@ -197,8 +240,18 @@ public class App implements EntryPoint {
 
                     map.addLayer(vectorLayer);
 
+                    // transform finishing point
+                    Point transformedGeom = (Point) geom.clone().transform(Projection.get(EPSG_2056), Projection.get(EPSG_4326));
+                    lonFinish = transformedGeom.getCoordinates().getX();
+                    latFinish = transformedGeom.getCoordinates().getY();
+
+                    // set finishing address in suggestbox
+                    ((HTMLInputElement) searchBox.getSuggestBoxFinish().getInputElement().element()).value = strname_deinr + " " + + dplz4 + " " + ggdename;
+                    searchBox.getSuggestBoxFinish().focus();
+                    
+                    // after all is done: center and zoom map view
                     map.getView().setCenter(geom.getCoordinates());
-                    map.getView().setZoom(12);
+                    map.getView().setZoom(12);                    
                 }
 
                 return null;
@@ -208,10 +261,9 @@ public class App implements EntryPoint {
             });
         }
         
-        body().add(new SearchBox(map));
         
     }
-
+    
     private static native void updateURLWithoutReloading(String newUrl) /*-{
         $wnd.history.pushState(newUrl, "", newUrl);
     }-*/;
