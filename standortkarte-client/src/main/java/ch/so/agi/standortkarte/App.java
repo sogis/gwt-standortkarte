@@ -207,6 +207,9 @@ public class App implements EntryPoint {
                 return null;
             });
         }
+        
+        body().add(new SearchBox(map));
+        
     }
 
     private static native void updateURLWithoutReloading(String newUrl) /*-{

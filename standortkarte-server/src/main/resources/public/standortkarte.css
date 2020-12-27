@@ -44,3 +44,7 @@ body, div {
     max-width: calc(100% - 30px);
     max-height: calc(100% - 30px);
 }
+
+#suggestBoxDiv {
+    padding: 20px;
+}
