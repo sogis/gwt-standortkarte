@@ -1,5 +1,9 @@
 # gwt-standortkarte
 
+## todo
+- BUILD_NUMBER...
+- Github Action
+
 ## create empty project from archetype
 ```
 mvn org.apache.maven.plugins:maven-archetype-plugin:2.2:generate \
@@ -34,27 +38,20 @@ mvn clean install -pl :standortkarte-server -nsu
 ## build
 
 ### jvm
-**todo**
+```
+./mvnw clean package
+docker build -t sogis/standortkarte-jvm -f Dockerfile.jvm
+```
 
 ### native image
 ```
-mvn -Penv-prod,native clean package -nsu
-```
-
-
-**todo**:
-```
-BUILD_NUMBER=9999 mvn clean package -nsu
+./mvnw -Penv-prod,native clean package
+docker build -t sogis/standortkarte -f Dockerfile.native
 ```
 
 ```
-mvn dependency:tree
+docker build -t sogis/standortkarte -f Dockerfile.native-build
 ```
-
-```
-docker build -t sogis/standortkarte -f Dockerfile.layered .
-```
-
 
 ## run
 ```
