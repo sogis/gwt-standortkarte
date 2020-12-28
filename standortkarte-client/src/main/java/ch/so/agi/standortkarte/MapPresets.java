@@ -64,7 +64,7 @@ public class MapPresets {
         wmtsLayerOptions.setSource(wmtsSource);
 
         Tile wmtsLayer = new Tile(wmtsLayerOptions);
-        wmtsLayer.setOpacity(1.0);
+        wmtsLayer.setOpacity(0.6);
 
         ViewOptions viewOptions = OLFactory.createOptions();
         viewOptions.setProjection(projection);

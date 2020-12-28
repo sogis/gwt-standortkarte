@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.dominokit.domino.ui.dropdown.DropDownMenu;
+import org.dominokit.domino.ui.forms.Radio;
+import org.dominokit.domino.ui.forms.RadioGroup;
 import org.dominokit.domino.ui.forms.SuggestBox;
 import org.dominokit.domino.ui.forms.SuggestBox.DropDownPositionDown;
 import org.dominokit.domino.ui.forms.SuggestBoxStore;
@@ -16,6 +18,7 @@ import org.dominokit.domino.ui.icons.Icon;
 import org.dominokit.domino.ui.icons.Icons;
 import org.dominokit.domino.ui.icons.MdiIcon;
 import org.dominokit.domino.ui.style.Color;
+import org.dominokit.domino.ui.utils.HasChangeHandlers.ChangeHandler;
 import org.dominokit.domino.ui.utils.HasSelectionHandler.SelectionHandler;
 import org.gwtproject.event.shared.HandlerRegistration;
 import org.jboss.elemento.Attachable;
@@ -133,8 +136,11 @@ public class SearchBox implements IsElement<HTMLElement>, Attachable {
                     HTMLInputElement el =(HTMLInputElement) suggestBoxStart.getInputElement().element();
                     el.value = "";
                     suggestBoxStart.unfocus();
-    //                ol.source.Vector vectorSource = map.getHighlightLayer().getSource();
-    //                vectorSource.clear(false); 
+
+                    CustomEventInit eventInit = CustomEventInit.create();
+                    eventInit.setBubbles(true);
+                    CustomEvent customEvent = new CustomEvent("startingPointDeleted", eventInit);
+                    root.dispatchEvent(customEvent);
                 }
             });
             
@@ -172,15 +178,17 @@ public class SearchBox implements IsElement<HTMLElement>, Attachable {
             HTMLElement resetIcon = Icons.ALL.close().setId("SearchResetIcon").element();
             resetIcon.style.cursor = "pointer";
     
-            // TODO: event for resetting finishing coords
             resetIcon.addEventListener("click", new EventListener() {
                 @Override
                 public void handleEvent(Event evt) {
                     HTMLInputElement el =(HTMLInputElement) suggestBoxFinish.getInputElement().element();
                     el.value = "";
                     suggestBoxFinish.unfocus();
-    //                ol.source.Vector vectorSource = map.getHighlightLayer().getSource();
-    //                vectorSource.clear(false); 
+
+                    CustomEventInit eventInit = CustomEventInit.create();
+                    eventInit.setBubbles(true);
+                    CustomEvent customEvent = new CustomEvent("finishingPointDeleted", eventInit);
+                    root.dispatchEvent(customEvent);
                 }
             });
             
@@ -209,16 +217,31 @@ public class SearchBox implements IsElement<HTMLElement>, Attachable {
                 }
             });
         }
-        
-        CustomEvent foo = new CustomEvent("found");
-        
-        // todo
-        
-        
-        
+                
         HTMLElement suggestBoxDiv = div().id("suggestBoxDiv").element();
         suggestBoxDiv.appendChild(suggestBoxStart.element());
         suggestBoxDiv.appendChild(suggestBoxFinish.element());
+        
+        RadioGroup radioGroup = RadioGroup.create("device", "")
+        .appendChild(Radio.create("car", "Mit dem Auto").check())
+        .appendChild(Radio.create("bike", "Mit dem Fahrrad"))
+        .appendChild(Radio.create("foot", "Zu Fuss"))
+        .horizontal();
+        suggestBoxDiv.appendChild(radioGroup.element());
+        
+        radioGroup.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onValueChanged(Object value) {
+                console.log(value);
+                
+                CustomEventInit eventInit = CustomEventInit.create();
+                eventInit.setDetail(value);
+                eventInit.setBubbles(true);
+                CustomEvent customEvent = new CustomEvent("meansOfTransportChanged", eventInit);
+                root.dispatchEvent(customEvent);                
+            }
+        });
+        
         root.appendChild(suggestBoxDiv);
     }        
     

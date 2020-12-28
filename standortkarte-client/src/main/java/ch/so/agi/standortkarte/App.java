@@ -2,17 +2,10 @@ package ch.so.agi.standortkarte;
 
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
-import static org.jboss.elemento.EventType.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
-import static org.dominokit.domino.ui.style.Unit.px;
-
-import org.dominokit.domino.ui.icons.Icon;
-import org.dominokit.domino.ui.icons.Icons;
-import org.dominokit.domino.ui.style.Color;
 import org.dominokit.domino.ui.style.ColorScheme;
 import org.dominokit.domino.ui.themes.Theme;
 import org.gwtproject.safehtml.shared.SafeHtmlUtils;
@@ -21,39 +14,21 @@ import org.jboss.elemento.HtmlContentBuilder;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 import elemental2.core.Global;
 import elemental2.core.JsArray;
 import elemental2.core.JsNumber;
 import elemental2.core.JsString;
 import elemental2.dom.CustomEvent;
-import elemental2.dom.Document;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Event;
 import elemental2.dom.EventListener;
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.Headers;
 import elemental2.dom.RequestInit;
-import jsinterop.annotations.JsPackage;
-import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
 import ol.Collection;
@@ -62,43 +37,22 @@ import ol.Extent;
 import ol.Feature;
 import ol.FeatureOptions;
 import ol.Map;
-import ol.MapBrowserEvent;
-import ol.MapOptions;
 import ol.OLFactory;
 import ol.Overlay;
 import ol.OverlayOptions;
 import ol.View;
-import ol.ViewOptions;
-import ol.control.Control;
-import ol.format.GeoJson;
-import ol.format.Wkt;
-import ol.geom.Geometry;
+import ol.geom.LineString;
 import ol.geom.Point;
-import ol.interaction.DefaultInteractionsOptions;
-import ol.interaction.Interaction;
 import ol.layer.Base;
-import ol.layer.Image;
-import ol.layer.LayerOptions;
-import ol.layer.Tile;
 import ol.layer.VectorLayerOptions;
 import ol.proj.Projection;
 import ol.proj.ProjectionOptions;
-import ol.source.ImageWms;
-import ol.source.ImageWmsOptions;
-import ol.source.ImageWmsParams;
 import ol.source.Vector;
 import ol.source.VectorOptions;
-import ol.source.Wmts;
-import ol.source.WmtsOptions;
-import ol.style.Circle;
-import ol.style.CircleOptions;
 import ol.style.IconOptions;
 import ol.style.Stroke;
 import ol.style.Style;
 import ol.style.StyleOptions;
-import ol.tilegrid.TileGrid;
-import ol.tilegrid.WmtsTileGrid;
-import ol.tilegrid.WmtsTileGridOptions;
 import proj4.Proj4;
 
 public class App implements EntryPoint {
@@ -106,22 +60,32 @@ public class App implements EntryPoint {
 
     // Application settings
     private String myVar;
+    private String SEARCH_SERVICE_URL = "https://api3.geo.admin.ch/rest/services/api/MapServer/find?layer=ch.bfs.gebaeude_wohnungs_register&searchField=egid&returnGeometry=true&geometryFormat=geojson&contains=false&sr=2056&searchText=";    
+    //private String ROUTING_SERVICE_URL = "https://routing.openstreetmap.de/routed-bike/route/v1/driving/7.516431670901193,47.214321749999996;7.5427398,47.2051249?overview=full&geometries=geojson&steps=false";
 
     // Format settings
     private NumberFormat fmtDefault = NumberFormat.getDecimalFormat();
     private NumberFormat fmtPercent = NumberFormat.getFormat("#0.0");
 
     private static final String EPSG_2056 = "EPSG:2056";
-    private static final String EPSG_4326 = "EPSG:4326";
+    private static final String EPSG_4326 = "EPSG:4326"; 
+    private Projection projection;
 
+    private String ID_ATTR_NAME = "id";
     private String MAP_DIV_ID = "map";
+    private String POPUP_LAYER_ID = "popup_layer";
+    private String ROUTE_LAYER_ID = "route_layer";
+
+    private Map map;
+    private Overlay popup;
+    private SearchBox searchBox;
     
-    SearchBox searchBox;
+    private Double lonStart;
+    private Double latStart;
+    private Double lonFinish;    
+    private Double latFinish;
     
-    private double lonStart;
-    private double latStart;
-    private double lonFinish;    
-    private double latFinish;
+    private String meansOfTransportation = "car";
 
     public void onModuleLoad() {
         // fetch settings form server
@@ -139,7 +103,7 @@ public class App implements EntryPoint {
         projectionOptions.setCode(EPSG_2056);
         projectionOptions.setUnits("m");
         projectionOptions.setExtent(new Extent(2420000, 1030000, 2900000, 1350000));
-        Projection projection = new Projection(projectionOptions);
+        projection = new Projection(projectionOptions);
         Projection.addProjection(projection);
 
         // change theme
@@ -150,7 +114,7 @@ public class App implements EntryPoint {
         HTMLElement mapElement = div().id(MAP_DIV_ID).element();
         body().add(mapElement);
 
-        Map map = MapPresets.getColorMap(MAP_DIV_ID);
+        map = MapPresets.getColorMap(MAP_DIV_ID);
 
         // add searchbox
         searchBox = new SearchBox(map);
@@ -160,7 +124,54 @@ public class App implements EntryPoint {
             public void handleEvent(Event evt) {
                 CustomEvent customEvent = (CustomEvent) evt;
                 SearchResult result = (SearchResult) customEvent.detail;
-                console.log(result.getLon());
+                
+                lonStart = result.getLon();
+                latStart = result.getLat();
+                
+                calculateRoute();
+            }
+        });
+        
+        body().element().addEventListener("startingPointDeleted", new EventListener() {
+            @Override
+            public void handleEvent(Event evt) {                
+                lonStart = null;
+                latStart = null;
+                
+                removeRoute();
+            }
+        });
+        
+        body().element().addEventListener("finishingPointChanged", new EventListener() {
+            @Override
+            public void handleEvent(Event evt) {
+                CustomEvent customEvent = (CustomEvent) evt;
+                SearchResult result = (SearchResult) customEvent.detail;
+                
+                lonFinish = result.getLon();
+                latFinish = result.getLat();
+                
+                calculateRoute();
+            }
+        });
+        
+        body().element().addEventListener("finishingPointDeleted", new EventListener() {
+            @Override
+            public void handleEvent(Event evt) {                
+                lonFinish = null;
+                latFinish = null;
+                
+                removeRoute();
+                removePopup();
+            }
+        });
+        
+        body().element().addEventListener("meansOfTransportChanged", new EventListener() {
+            @Override
+            public void handleEvent(Event evt) {   
+                CustomEvent customEvent = (CustomEvent) evt;
+                meansOfTransportation = (String) customEvent.detail;
+                calculateRoute();
             }
         });
         
@@ -175,7 +186,6 @@ public class App implements EntryPoint {
             headers.append("Content-Type", "application/x-www-form-urlencoded");
             requestInit.setHeaders(headers);
 
-            String SEARCH_SERVICE_URL = "https://api3.geo.admin.ch/rest/services/api/MapServer/find?layer=ch.bfs.gebaeude_wohnungs_register&searchField=egid&returnGeometry=true&geometryFormat=geojson&contains=false&sr=2056&searchText=";
             DomGlobal.fetch(SEARCH_SERVICE_URL + egid.trim().toLowerCase(), requestInit).then(response -> {
                 if (!response.ok) {
                     return null;
@@ -206,7 +216,7 @@ public class App implements EntryPoint {
                     overlayOptions.setElement(overlay);
                     overlayOptions.setPosition(new Coordinate(easting, northing));
                     overlayOptions.setOffset(OLFactory.createPixel(-100, -120));
-                    Overlay popup = new Overlay(overlayOptions);
+                    popup = new Overlay(overlayOptions);
                     map.addOverlay(popup);
 
                     // add marker
@@ -237,6 +247,7 @@ public class App implements EntryPoint {
                     VectorLayerOptions vectorLayerOptions = OLFactory.createOptions();
                     vectorLayerOptions.setSource(vectorSource);
                     ol.layer.Vector vectorLayer = new ol.layer.Vector(vectorLayerOptions);
+                    vectorLayer.set(ID_ATTR_NAME, POPUP_LAYER_ID);
 
                     map.addLayer(vectorLayer);
 
@@ -260,8 +271,132 @@ public class App implements EntryPoint {
                 return null;
             });
         }
+    }
+    
+    private void calculateRoute() {
+        if (lonStart == null && latStart == null && lonFinish == null && latFinish == null) {
+            return;
+        }
+                
+        RequestInit requestInit = RequestInit.create();
+        Headers headers = new Headers();
+        headers.append("Content-Type", "application/x-www-form-urlencoded");
+        requestInit.setHeaders(headers);
+
+        //https://routing.osm.ch/routed-bike/route/v1/driving/
+        //https://routing.osm.ch/routed-foot/route/v1/driving/7.516431670901193,47.214321749999996;7.54274,47.205125?overview=false&alternatives=true&steps=true&hints=ce4DgK6ECoAAAAAACwAAAAAAAAA8AQAAbgAAAAUAAAAAAAAAnAAAADcAAADARwMAyQYAACOxcgDDb9ACELFyAPJu0AIFABEPeO2YXw==;2bsKgP___39QbwAAQgAAAFQAAAAAAAAAAAAAAEIAAABUAAAAAAAAAAAAAACJhAcAyQYAAOsXcwCuStAC1BdzAAVL0AIAABEPeO2YXw==
         
-        
+        String ROUTING_SERVICE_URL = "https://routing.osm.ch/routed-"+ meansOfTransportation +"/route/v1/driving/";
+        String query = ROUTING_SERVICE_URL + lonStart + "," +latStart + ";" + lonFinish + "," + latFinish;
+        query += "?overview=full&geometries=geojson&steps=false";
+        DomGlobal.fetch(query, requestInit).then(response -> {
+            if (!response.ok) {
+                return null;
+            }
+            return response.text();
+        }).then(json -> {            
+            JsPropertyMap<?> parsed = Js.cast(Global.JSON.parse(json));
+            JsArray<?> routes = Js.cast(parsed.get("routes"));
+
+            LineString route;
+            if (routes.getLength() > 0) {
+                JsPropertyMap<?> routeObj = Js.cast(routes.getAt(0));
+                JsPropertyMap<?> geometry = (JsPropertyMap) routeObj.get("geometry");
+                JsArray<?> coordinates = Js.cast(geometry.get("coordinates"));
+                
+                List<Coordinate> coords = new ArrayList<Coordinate>();
+                for (int i=0; i<coordinates.getLength(); i++) {                    
+                    JsArray<?> coordJsArray = Js.cast(coordinates.getAt(i));
+                    double lon = new Double(((JsNumber) coordJsArray.getAt(0)).valueOf());
+                    double lat = new Double(((JsNumber) coordJsArray.getAt(1)).valueOf());
+
+                    Coordinate coordinate = new Coordinate(lon, lat);
+                    coords.add(coordinate);
+                }
+                Coordinate[] coordsArray = new Coordinate[coords.size()];
+                route = new LineString(coords.toArray(coordsArray));
+
+                LineString routeTransformed = (LineString) route.clone().transform(Projection.get(EPSG_4326), Projection.get(EPSG_2056));
+                
+                if (getMapLayerById(ROUTE_LAYER_ID) != null) {
+                    map.removeLayer(getMapLayerById(ROUTE_LAYER_ID));
+                }
+                
+                FeatureOptions featureOptions = OLFactory.createOptions();
+                featureOptions.setGeometry(routeTransformed);
+
+                Feature feature = new Feature(featureOptions);
+
+                Style style = new Style();
+                Stroke stroke = new Stroke();
+                stroke.setWidth(10);
+                stroke.setColor(new ol.color.Color(230, 0, 0, 0.7));
+                //stroke.setColor(new ol.color.Color(130, 145, 213, 1));
+                style.setStroke(stroke);
+                feature.setStyle(style);
+
+                ol.Collection<Feature> lstFeatures = new ol.Collection<Feature>();
+                lstFeatures.push(feature);
+
+                VectorOptions vectorSourceOptions = OLFactory.createOptions();
+                vectorSourceOptions.setFeatures(lstFeatures);
+                Vector vectorSource = new Vector(vectorSourceOptions);
+
+                VectorLayerOptions vectorLayerOptions = OLFactory.createOptions();
+                vectorLayerOptions.setSource(vectorSource);
+                ol.layer.Vector vectorLayer = new ol.layer.Vector(vectorLayerOptions);
+                vectorLayer.set(ID_ATTR_NAME, ROUTE_LAYER_ID);
+
+                map.addLayer(vectorLayer);
+                
+                Extent extent = routeTransformed.getExtent();
+                View view = map.getView();
+                double resolution = view.getResolutionForExtent(extent);
+                view.setZoom(Math.floor(view.getZoomForResolution(resolution)) - 0);
+                
+                double x = extent.getLowerLeftX() + extent.getWidth() / 2;
+                double y = extent.getLowerLeftY() + extent.getHeight() / 2;
+                view.setCenter(new Coordinate(x, y));                    
+            }
+
+            return null;
+        }).catch_(error -> {
+            console.log(error);
+            return null;
+        });
+    }
+    
+    private void removeRoute() {
+        if (getMapLayerById(ROUTE_LAYER_ID) != null) {
+            map.removeLayer(getMapLayerById(ROUTE_LAYER_ID));
+        }
+    }
+    
+    private void removePopup() {
+        if (getMapLayerById(POPUP_LAYER_ID) != null) {
+            map.removeLayer(getMapLayerById(POPUP_LAYER_ID));
+            map.removeOverlay(popup);
+        }
+    }
+    
+    private Base getMapLayerById(String id) {
+        ol.Collection<Base> layers = map.getLayers();
+        for (int i = 0; i < layers.getLength(); i++) {
+            Base item = layers.item(i);
+            try {
+                String layerId = item.get(ID_ATTR_NAME);
+                if (layerId == null) {
+                    continue;
+                }
+                if (layerId.equalsIgnoreCase(id)) {
+                    return item;
+                }
+            } catch (Exception e) {
+                console.log(e.getMessage());
+                console.log("should not reach here");
+            }
+        }
+        return null;
     }
     
     private static native void updateURLWithoutReloading(String newUrl) /*-{

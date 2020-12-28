@@ -39,7 +39,7 @@ body, div {
     left: 15px;
     width: 500px;
     /*height: calc(100% - 30px);*/
-    height: 170px;
+    height: 230px;
     overflow-y: hidden;
     max-width: calc(100% - 30px);
     max-height: calc(100% - 30px);
@@ -52,3 +52,9 @@ body, div {
 .field-group input, .field-group textarea {
     font-family: Frutiger, 'Fira Sans', sans-serif !important;   
 }
+
+.radio-option.checked label:after, .radio-option.with-gap.checked label:after {
+	background-color: #F44336;
+	border-color: #F44336; 
+}
+
