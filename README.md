@@ -63,6 +63,3 @@ docker run -p 8080:8080 sogis/standortkarte
 ```
 http://localhost:8080/index.html?egid=2122818
 ```
-
-
-
