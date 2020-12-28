@@ -26,6 +26,20 @@ mvn gwt:codeserver -pl *-client -am
 mvn gwt:codeserver -pl *-client -am -nsu
 ```
 
+Build only server module
+```
+mvn clean install -pl :standortkarte-server -nsu
+```
+
+## build
+
+### jvm
+**todo**
+
+### native image
+```
+mvn -Penv-prod,native clean package -nsu
+```
 
 
 **todo**:
@@ -52,3 +66,6 @@ docker run -p 8080:8080 sogis/standortkarte
 ```
 http://localhost:8080/index.html?egid=2122818
 ```
+
+
+

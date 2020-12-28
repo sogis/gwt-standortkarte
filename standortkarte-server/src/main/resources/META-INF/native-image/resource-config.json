@@ -1,0 +1,14 @@
+{
+  "resources":{
+  "includes":[
+    {"pattern":"\\Qpublic/index.html\\E"},
+    {"pattern":"\\Qpublic/icon.png\\E"},
+    {"pattern":"\\Qpublic/app/font/MaterialIcons-Regular.eot\\E"},
+    {"pattern":"\\Qpublic/app/font/MaterialIcons-Regular.ttf\\E"},
+    {"pattern":"\\Qpublic/app/font/MaterialIcons-Regular.woff\\E"},
+    {"pattern":"\\Qpublic/app/font/MaterialIcons-Regular.woff2\\E"},    
+    {"pattern": ".*\\.js$"},
+    {"pattern": ".*\\.css$"}        
+  ]},
+  "bundles":[]
+}

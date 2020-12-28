@@ -24,23 +24,32 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <!--
       <exclusions>
         <exclusion>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
       </exclusions>
+      -->
     </dependency>
+    <!-- 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
+    -->    
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
       <optional>true</optional>
     </dependency>
-    
     <dependency>
         <groupId>org.springframework.experimental</groupId>
         <artifactId>spring-graalvm-native</artifactId>
@@ -50,7 +59,6 @@
   </dependencies>
   
 <repositories>
-    <!-- ... -->
     <repository>
         <id>spring-milestone</id>
         <name>Spring milestone</name>
@@ -67,8 +75,17 @@
 </pluginRepositories>
   
   <build>
+    <!-- Name der finalen Jar-Datei. -->
     <!--<finalName>standortkarte</finalName>-->
     <plugins>
+      <!-- Ohne Version werden die Tests nicht durchgeführt. In diesem Fall wird eine älteren Version verwendet (2.12.x).
+      Es ist noch unklar, ob das nur der Fall ist, weil ich zuerst gar keine Tests hatte und dann das surefire plugin
+      direkt verwendete. Eventuell - bei vorhandenen Tests - hätte Spring Boot selber die neuere Version heruntergeladen. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>        
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -119,6 +136,7 @@
       </activation>
       <build>
         <plugins>
+        <!-- Das ist "build smell", weil das Entpacken vor dem Packen kommt. Eclipse und Maven reklamiert auch. Siehe README.md -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
@@ -163,7 +181,41 @@
     <id>native</id>
     <build>
       <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>make-native-image-config-folder</id>
+                                <phase>test-compile</phase>
+                                <configuration>
+                                    <tasks>
+                                        <mkdir dir="${project.basedir}/target/classes/META-INF/native-image/"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.0</version>                        
+                        <configuration>
+                            <argLine>-Dorg.graalvm.nativeimage.imagecode=agent -Dspring.xml.ignore=true -Dspring.spel.ignore=true -agentlib:native-image-agent=access-filter-file=target/classes/access-filter.json,config-merge-dir=target/classes/META-INF/native-image</argLine>
+                            <!-- 
+                            <includes>
+                              <include>**/ApplicationTests.java</include>
+                            </includes>
+                             -->
+                        </configuration>
+                    </plugin>
+                    
         <plugin>
+          <!-- https://www.graalvm.org/reference-manual/native-image/NativeImageMavenPlugin/
+          https://repo.spring.io/milestone/org/springframework/experimental/spring-graalvm-native-docs/0.8.5/spring-graalvm-native-docs-0.8.5.zip!/reference/index.html#options -->
           <groupId>org.graalvm.nativeimage</groupId>
           <artifactId>native-image-maven-plugin</artifactId>
           <version>20.3.0</version>
