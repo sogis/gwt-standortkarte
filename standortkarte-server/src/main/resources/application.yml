@@ -32,5 +32,3 @@ spring:
 # ========================
 app:
     myVar: ${VAR:defaultValue}
-
-

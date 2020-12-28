@@ -87,6 +87,10 @@
 				</executions>
 				<configuration>
 					<skip>false</skip>
+					<!-- Spring Boot ist im JVM-Modus schlau genug in Produktion nicht zu starten.
+					Als native-image scheint das aber nicht zu funktionieren. Aus diesem Grund
+					werden sie hier nicht ins Jar gepackt. -->
+					<excludeDevtools>true</excludeDevtools>
 				</configuration>
 			</plugin>
 			<plugin>
