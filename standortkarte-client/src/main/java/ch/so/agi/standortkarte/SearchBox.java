@@ -232,8 +232,6 @@ public class SearchBox implements IsElement<HTMLElement>, Attachable {
         radioGroup.addChangeHandler(new ChangeHandler() {
             @Override
             public void onValueChanged(Object value) {
-                console.log(value);
-                
                 CustomEventInit eventInit = CustomEventInit.create();
                 eventInit.setDetail(value);
                 eventInit.setBubbles(true);

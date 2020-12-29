@@ -21,18 +21,18 @@ Use application.yml instead of *.properties.
 
 First Terminal:
 ```
-mvn spring-boot:run -pl *-server -am
+./mvnw spring-boot:run -Penv-dev -pl *-server -am
 ```
 
 Second Terminal:
 ```
-mvn gwt:codeserver -pl *-client -am
-mvn gwt:codeserver -pl *-client -am -nsu
+./mvnw gwt:codeserver -pl *-client -am
+./mvnw gwt:codeserver -pl *-client -am -nsu
 ```
 
 Build only server module
 ```
-mvn clean install -pl :standortkarte-server -nsu
+./mvnw clean install -pl :standortkarte-server -nsu
 ```
 
 ## build
