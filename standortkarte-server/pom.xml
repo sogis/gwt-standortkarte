@@ -90,6 +90,8 @@
 					<!-- Spring Boot ist im JVM-Modus schlau genug in Produktion nicht zu starten.
 					Als native-image scheint das aber nicht zu funktionieren. Aus diesem Grund
 					werden sie hier nicht ins Jar gepackt. -->
+					<!--TODO: Scheint aber nicht den gewünschten Effekt zu haben. Die Einstellungen
+					im application-prod.yml funktionieren jedoch.-->
 					<excludeDevtools>true</excludeDevtools>
 				</configuration>
 			</plugin>

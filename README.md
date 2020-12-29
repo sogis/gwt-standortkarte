@@ -56,6 +56,7 @@ docker build -t sogis/standortkarte -f Dockerfile.native-build .
 ## run
 ```
 docker run -p 8080:8080 sogis/standortkarte
+docker run -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 sogis/standortkarte
 ```
 
 ## examples
