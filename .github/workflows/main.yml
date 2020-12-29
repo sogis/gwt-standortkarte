@@ -26,4 +26,4 @@ jobs:
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
           docker pull $DOCKER_ACCOUNT/$DOCKER_REPO:latest
           docker build -t $DOCKER_ACCOUNT/$DOCKER_REPO:latest -f Dockerfile.native-build .
-          docker build -t $DOCKER_ACCOUNT/$DOCKER_REPO:2.0.$BUILD_NUMBER -f Dockerfile.native-build .
+          docker tag $DOCKER_ACCOUNT/$DOCKER_REPO:latest $DOCKER_ACCOUNT/$DOCKER_REPO:2.0.$BUILD_NUMBER
