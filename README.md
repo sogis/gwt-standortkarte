@@ -40,17 +40,17 @@ mvn clean install -pl :standortkarte-server -nsu
 ### jvm
 ```
 ./mvnw clean package
-docker build -t sogis/standortkarte-jvm -f Dockerfile.jvm
+docker build -t sogis/standortkarte-jvm -f Dockerfile.jvm .
 ```
 
 ### native image
 ```
 ./mvnw -Penv-prod,native clean package
-docker build -t sogis/standortkarte -f Dockerfile.native
+docker build -t sogis/standortkarte -f Dockerfile.native .
 ```
 
 ```
-docker build -t sogis/standortkarte -f Dockerfile.native-build
+docker build -t sogis/standortkarte -f Dockerfile.native-build .
 ```
 
 ## run
