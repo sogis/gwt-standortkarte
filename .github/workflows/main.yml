@@ -15,15 +15,15 @@ jobs:
       - name: Print new build number
         run: echo "Build number is $BUILD_NUMBER"
       - uses: actions/checkout@v1
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
       - name: Build inside Docker Container and create final Docker Image
         run: |
           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
           docker pull $DOCKER_ACCOUNT/$DOCKER_REPO:latest
           docker build -t $DOCKER_ACCOUNT/$DOCKER_REPO:latest -f Dockerfile.native-build .
           docker tag $DOCKER_ACCOUNT/$DOCKER_REPO:latest $DOCKER_ACCOUNT/$DOCKER_REPO:2.0.$BUILD_NUMBER
+      - name: Push Docker Images
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+          docker images
+          docker push $DOCKER_ACCOUNT/$DOCKER_REPO:latest
+          docker push $DOCKER_ACCOUNT/$DOCKER_REPO:2.0.$BUILD_NUMBER
