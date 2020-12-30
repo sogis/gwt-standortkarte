@@ -39,14 +39,14 @@ body, div {
     left: 15px;
     width: 500px;
     /*height: calc(100% - 30px);*/
-    height: 230px;
+    /*height: 230px;*/
     overflow-y: hidden;
     max-width: calc(100% - 30px);
-    max-height: calc(100% - 30px);
+    /*max-height: calc(100% - 30px);*/
 }
 
 #suggestBoxDiv {
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
 }
 
 .field-group input, .field-group textarea {
