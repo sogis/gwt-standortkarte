@@ -2,11 +2,19 @@ package ch.so.agi.standortkarte;
 
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
+import static org.dominokit.domino.ui.style.Unit.px;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dominokit.domino.ui.button.Button;
+import org.dominokit.domino.ui.button.ButtonSize;
+import org.dominokit.domino.ui.icons.Icon;
+import org.dominokit.domino.ui.icons.Icons;
+import org.dominokit.domino.ui.popover.PopupPosition;
+import org.dominokit.domino.ui.popover.Tooltip;
 import org.dominokit.domino.ui.style.ColorScheme;
+import org.dominokit.domino.ui.style.StyleType;
 import org.dominokit.domino.ui.themes.Theme;
 import org.gwtproject.safehtml.shared.SafeHtmlUtils;
 import org.jboss.elemento.HtmlContentBuilder;
@@ -36,6 +44,8 @@ import ol.Coordinate;
 import ol.Extent;
 import ol.Feature;
 import ol.FeatureOptions;
+import ol.Geolocation;
+import ol.GeolocationOptions;
 import ol.Map;
 import ol.OLFactory;
 import ol.Overlay;
@@ -87,15 +97,17 @@ public class App implements EntryPoint {
     
     private String meansOfTransportation = "car";
 
+    private boolean trackingPosition = false;
+    
     public void onModuleLoad() {
         // fetch settings form server
         // ...
-        init();
+        init();        
     }
 
     @SuppressWarnings("unchecked")
     private void init() {
-        // add LV95 
+        // make LV95 known to ol3
         Proj4.defs(EPSG_2056, "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
         ol.proj.Proj4.register(Proj4.get());
 
@@ -176,6 +188,31 @@ public class App implements EntryPoint {
         });
         
         body().add(searchBox);
+        
+        // add geolocation        
+        Button geolocationBtn = Button.create(Icons.ALL.gps_fixed()) // adjust()
+                .circle()
+                .setSize(ButtonSize.LARGE)
+                .setButtonType(StyleType.DEFAULT)
+                .style()
+                .setColor("#333333")
+                .setMargin(px.of(5)).get().setId("geolocation");
+        
+        geolocationBtn.addClickListener(new EventListener() {
+            @Override
+            public void handleEvent(Event evt) {                
+                if (!trackingPosition) {
+                    geolocationBtn.style().setColor("#F44336");
+                    trackingPosition = true;
+                } else {
+                    geolocationBtn.style().setColor("#333333");
+                    trackingPosition = false;                    
+                }
+            }
+        });
+        
+        body().add(geolocationBtn);
+
 
         // handle egrid from location parameter 
         if (Window.Location.getParameter("egid") != null) {

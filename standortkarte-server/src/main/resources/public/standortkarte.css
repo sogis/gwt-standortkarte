@@ -29,7 +29,7 @@ body, div {
 #searchBox {
     border-radius: 3px;
     background-color: #fafafa;
-    color: #696969;
+    color: #333333;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
     position: absolute;
     margin-top: 0px;
@@ -51,6 +51,7 @@ body, div {
 
 .field-group input, .field-group textarea {
     font-family: Frutiger, 'Fira Sans', sans-serif !important;   
+    color: 333333 !important;
 }
 
 .radio-option.checked label:after, .radio-option.with-gap.checked label:after {
@@ -58,3 +59,8 @@ body, div {
 	border-color: #F44336; 
 }
 
+#geolocation {
+	position: fixed;
+	left: 10px;
+	bottom: 10px; 
+}
