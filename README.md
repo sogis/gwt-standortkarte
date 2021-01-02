@@ -44,6 +44,11 @@ docker build -t sogis/standortkarte-jvm -f Dockerfile.jvm .
 ```
 
 ### native image
+Do not forget to:
+
+a) use Java GraalVM distribution
+b) install native-image: `gu install native-image`
+
 ```
 ./mvnw -Penv-prod,native clean package
 docker build -t sogis/standortkarte -f Dockerfile.native .
@@ -56,7 +61,7 @@ docker build -t sogis/standortkarte -f Dockerfile.native-build .
 ## run
 ```
 docker run -p 8080:8080 sogis/standortkarte
-docker run -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 sogis/standortkarte
+docker run -e TZ=Europe/Zurich -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 sogis/standortkarte
 
 ```
 

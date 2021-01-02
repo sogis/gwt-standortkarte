@@ -1,20 +1,27 @@
 FROM oracle/graalvm-ce:20.3.0-java11 
 RUN gu install native-image
 RUN native-image --version
-
 COPY . /home/standortkarte
 WORKDIR /home/standortkarte
-
 RUN ./mvnw -q -B -Penv-prod,native clean package && \
-#RUN ./mvnw -q -B clean package && \
     ls -la /home/standortkarte/standortkarte-server
+
+FROM debian:buster-slim
+ADD https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz /usr/local
+RUN apt-get update && apt-get install -y xz-utils && \
+    xz -d -c /usr/local/upx-3.96-amd64_linux.tar.xz | tar -xOf - upx-3.96-amd64_linux/upx > /bin/upx && \
+    chmod a+x /bin/upx
+
+WORKDIR /home/standortkarte
+COPY --from=0 /home/standortkarte/standortkarte-server/target/ch.so.agi.standortkarte.application /home/standortkarte
+RUN upx -7 -k /home/standortkarte/ch.so.agi.standortkarte.application
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.3
 WORKDIR /work/
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
-COPY --from=0 --chown=1001:root /home/standortkarte/standortkarte-server/target/ch.so.agi.standortkarte.application /work/application
+COPY --from=1 --chown=1001:root /home/standortkarte/ch.so.agi.standortkarte.application /work/application
 
 EXPOSE 8080
 USER 1001
