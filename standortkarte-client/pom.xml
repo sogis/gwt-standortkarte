@@ -78,6 +78,19 @@
         <configuration>
           <moduleName>ch.so.agi.standortkarte.App</moduleName>
           <moduleShortName>app</moduleShortName>
+            <compilerArgs>
+            <!-- 
+              <compilerArg>-style</compilerArg>
+              <compilerArg>PRETTY</compilerArg>  -->
+              
+              <!-- fetch() in Safari does not work without disable cast checking. -->
+              <compilerArg>-XdisableCastChecking</compilerArg>
+              <compilerArg>-XnoclassMetadata</compilerArg>
+            </compilerArgs>
+            <codeserverArgs>
+              <codeserverArg>-style</codeserverArg>
+              <codeserverArg>PRETTY</codeserverArg>
+            </codeserverArgs>
         </configuration>
       </plugin>
     </plugins>

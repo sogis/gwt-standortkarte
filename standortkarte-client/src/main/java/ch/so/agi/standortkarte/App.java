@@ -1,6 +1,7 @@
 package ch.so.agi.standortkarte;
 
 import static elemental2.dom.DomGlobal.console;
+import static elemental2.dom.DomGlobal.fetch;
 import static org.jboss.elemento.Elements.*;
 import static org.dominokit.domino.ui.style.Unit.px;
 
