@@ -1,9 +1,5 @@
 # gwt-standortkarte
 
-## todo
-- BUILD_NUMBER...
-- Github Action
-
 ## create empty project from archetype
 ```
 mvn org.apache.maven.plugins:maven-archetype-plugin:2.2:generate \

@@ -59,6 +59,10 @@ body, div {
 	border-color: #F44336; 
 }
 
+.radio-option:not(.checked) label, .radio-option.checked label {
+	font-family: Frutiger, 'Fira Sans', sans-serif !important;   
+}
+
 #geolocation {
 	position: fixed;
 	left: 10px;

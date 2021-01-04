@@ -8,10 +8,14 @@ import static org.dominokit.domino.ui.style.Unit.px;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dominokit.domino.ui.animations.Animation;
+import org.dominokit.domino.ui.animations.Transition;
 import org.dominokit.domino.ui.button.Button;
 import org.dominokit.domino.ui.button.ButtonSize;
 import org.dominokit.domino.ui.icons.Icon;
 import org.dominokit.domino.ui.icons.Icons;
+import org.dominokit.domino.ui.loaders.Loader;
+import org.dominokit.domino.ui.loaders.LoaderEffect;
 import org.dominokit.domino.ui.popover.PopupPosition;
 import org.dominokit.domino.ui.popover.Tooltip;
 import org.dominokit.domino.ui.style.ColorScheme;
@@ -51,7 +55,10 @@ import ol.Map;
 import ol.OLFactory;
 import ol.Overlay;
 import ol.OverlayOptions;
+import ol.PositionOptions;
+import ol.Size;
 import ol.View;
+import ol.ViewFitOptions;
 import ol.geom.LineString;
 import ol.geom.Point;
 import ol.layer.Base;
@@ -60,6 +67,9 @@ import ol.proj.Projection;
 import ol.proj.ProjectionOptions;
 import ol.source.Vector;
 import ol.source.VectorOptions;
+import ol.style.Circle;
+import ol.style.CircleOptions;
+import ol.style.Fill;
 import ol.style.IconOptions;
 import ol.style.Stroke;
 import ol.style.Style;
@@ -97,9 +107,9 @@ public class App implements EntryPoint {
     private Double latFinish;
     
     private String meansOfTransportation = "car";
-
-    private boolean trackingPosition = false;
     
+    private Animation posBtnAnimation;
+
     public void onModuleLoad() {
         // fetch settings form server
         // ...
@@ -190,7 +200,65 @@ public class App implements EntryPoint {
         
         body().add(searchBox);
         
-        // add geolocation        
+        // add geolocation         
+        ol.layer.Vector posVectorLayer = new ol.layer.Vector();
+        map.addLayer(posVectorLayer);
+        
+        ol.source.Vector posVectorSource = new ol.source.Vector();
+        posVectorLayer.setSource(posVectorSource);
+        
+        Feature positionFeature = new Feature();
+        Feature accuracyFeature = new Feature();
+
+        Stroke posStroke = new Stroke();
+        posStroke.setWidth(2);
+        posStroke.setColor(new ol.color.Color(255, 255, 255, 1));
+        Fill posFill = new Fill();
+        posFill.setColor(new ol.color.Color(51, 153, 204, 1));
+
+        CircleOptions circleOptions = new CircleOptions();
+        circleOptions.setRadius(6);
+        circleOptions.setStroke(posStroke);
+        circleOptions.setFill(posFill);
+
+        StyleOptions posStyleOptions = new StyleOptions();
+        posStyleOptions.setImage(new Circle(circleOptions));
+        Style posStyle = new Style(posStyleOptions);
+
+        positionFeature.setStyle(posStyle);
+
+        posVectorSource.addFeature(positionFeature);
+        posVectorSource.addFeature(accuracyFeature);
+        
+        PositionOptions positionOptions = new PositionOptions();
+        positionOptions.setEnableHighAccuracy(true);
+
+        GeolocationOptions geolocationOptions = new GeolocationOptions();
+        geolocationOptions.setTrackingOptions(positionOptions);
+        geolocationOptions.setProjection(map.getView().getProjection());
+
+        Geolocation geolocation = new Geolocation(geolocationOptions);
+        geolocation.addChangeListener((ol.events.Event event) -> {
+            positionFeature.setGeometry(new Point(geolocation.getPosition()));
+            map.getView().setCenter(geolocation.getPosition());
+        });
+        
+        ViewFitOptions viewFitOptions = OLFactory.createOptions();
+        viewFitOptions.setSize(new Size(100, 100));
+
+        geolocation.on("change:accuracyGeometry", (ol.events.Event event) -> {
+            posBtnAnimation.stop();
+            
+            accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+            map.getView().fit(geolocation.getAccuracyGeometry(), viewFitOptions);
+        });
+        
+        geolocation.on("error", (ol.events.Event event) -> {
+            posBtnAnimation.stop();
+            
+            Window.alert("Could't determine location!");
+        });
+
         Button geolocationBtn = Button.create(Icons.ALL.gps_fixed()) // adjust()
                 .circle()
                 .setSize(ButtonSize.LARGE)
@@ -202,18 +270,23 @@ public class App implements EntryPoint {
         geolocationBtn.addClickListener(new EventListener() {
             @Override
             public void handleEvent(Event evt) {                
-                if (!trackingPosition) {
+                if (!geolocation.getTracking()) {
+                    if (geolocation.getAccuracyGeometry() == null) {
+                        posBtnAnimation = Animation.create(geolocationBtn.element()).transition(Transition.PULSE).duration(1000).infinite().animate();
+                    }
+                    
+                    console.log(geolocation.getAccuracyGeometry());
+                    
                     geolocationBtn.style().setColor("#F44336");
-                    trackingPosition = true;
+                    geolocation.setTracking(true);
                 } else {
                     geolocationBtn.style().setColor("#333333");
-                    trackingPosition = false;                    
+                    geolocation.setTracking(false); // This will not remove the point.
                 }
             }
         });
         
         body().add(geolocationBtn);
-
 
         // handle egrid from location parameter 
         if (Window.Location.getParameter("egid") != null) {
@@ -253,7 +326,7 @@ public class App implements EntryPoint {
                     OverlayOptions overlayOptions = OLFactory.createOptions();
                     overlayOptions.setElement(overlay);
                     overlayOptions.setPosition(new Coordinate(easting, northing));
-                    overlayOptions.setOffset(OLFactory.createPixel(-100, -120));
+                    overlayOptions.setOffset(OLFactory.createPixel(-100, 10));
                     popup = new Overlay(overlayOptions);
                     map.addOverlay(popup);
 
