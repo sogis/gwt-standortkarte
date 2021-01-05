@@ -200,7 +200,15 @@ public class App implements EntryPoint {
         
         body().add(searchBox);
         
-        // add geolocation         
+        // add geolocation   
+        Button geolocationBtn = Button.create(Icons.ALL.gps_fixed()) // adjust()
+                .circle()
+                .setSize(ButtonSize.LARGE)
+                .setButtonType(StyleType.DEFAULT)
+                .style()
+                .setColor("#333333")
+                .setMargin(px.of(5)).get().setId("geolocation");
+
         ol.layer.Vector posVectorLayer = new ol.layer.Vector();
         map.addLayer(posVectorLayer);
         
@@ -255,28 +263,17 @@ public class App implements EntryPoint {
         
         geolocation.on("error", (ol.events.Event event) -> {
             posBtnAnimation.stop();
-            
-            Window.alert("Could't determine location!");
+            geolocationBtn.style().setColor("#333333");
+            Window.alert("Could't determine location! " + event.toString());
         });
 
-        Button geolocationBtn = Button.create(Icons.ALL.gps_fixed()) // adjust()
-                .circle()
-                .setSize(ButtonSize.LARGE)
-                .setButtonType(StyleType.DEFAULT)
-                .style()
-                .setColor("#333333")
-                .setMargin(px.of(5)).get().setId("geolocation");
-        
         geolocationBtn.addClickListener(new EventListener() {
             @Override
             public void handleEvent(Event evt) {                
                 if (!geolocation.getTracking()) {
                     if (geolocation.getAccuracyGeometry() == null) {
                         posBtnAnimation = Animation.create(geolocationBtn.element()).transition(Transition.PULSE).duration(1000).infinite().animate();
-                    }
-                    
-                    console.log(geolocation.getAccuracyGeometry());
-                    
+                    }                    
                     geolocationBtn.style().setColor("#F44336");
                     geolocation.setTracking(true);
                 } else {
