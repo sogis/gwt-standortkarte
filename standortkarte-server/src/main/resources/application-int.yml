@@ -1,0 +1,8 @@
+# ========================
+# SPRING
+# ========================
+spring:
+    devtools:
+        add-properties: false
+        livereload:
+            enabled: false
