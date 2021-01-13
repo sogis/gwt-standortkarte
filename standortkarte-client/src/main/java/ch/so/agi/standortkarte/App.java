@@ -379,10 +379,12 @@ public class App implements EntryPoint {
                 return null;
             });
         }
+        
+
     }
     
     private void calculateRoute() {
-        if (lonStart == null && latStart == null && lonFinish == null && latFinish == null) {
+        if (lonStart == null || latStart == null || lonFinish == null || latFinish == null) {
             return;
         }
                 

@@ -28,7 +28,7 @@ body, div {
 
 #searchBox {
     border-radius: 3px;
-    background-color: #fafafa;
+    /*background-color: #fafafa;*/
     color: #333333;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
     position: absolute;
@@ -45,8 +45,38 @@ body, div {
     /*max-height: calc(100% - 30px);*/
 }
 
+#searchCard {
+    background-color: #fafafa;
+    margin: 0px;
+}
+
+.card .header h2 {
+    color: #333333;
+}
+
+.card .body {
+    padding: 0px 20px 1px 20px;
+}
+
+/*
+.card .header {
+	padding: 10px;
+}
+*/
+
+/* Ist nicht notwendig, falls im Code: Color.THEME verwendet wird.
+Wenn man aber eine andere Color verwendet, wird der Arrow blau.*/
+/* Chrome */
+.card a:-webkit-any-link {
+	color: #202020;
+}
+/* Firefox */
+.card *|*:link {
+    color: #202020;
+}
+
 #suggestBoxDiv {
-    padding: 20px 20px 0px 20px;
+    /*padding: 20px 20px 0px 20px;*/
 }
 
 .field-group input, .field-group textarea {

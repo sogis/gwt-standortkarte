@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.dominokit.domino.ui.cards.Card;
 import org.dominokit.domino.ui.dropdown.DropDownMenu;
 import org.dominokit.domino.ui.forms.Radio;
 import org.dominokit.domino.ui.forms.RadioGroup;
@@ -20,6 +21,7 @@ import org.dominokit.domino.ui.icons.MdiIcon;
 import org.dominokit.domino.ui.style.Color;
 import org.dominokit.domino.ui.utils.HasChangeHandlers.ChangeHandler;
 import org.dominokit.domino.ui.utils.HasSelectionHandler.SelectionHandler;
+import org.dominokit.domino.ui.utils.TextNode;
 import org.gwtproject.event.shared.HandlerRegistration;
 import org.jboss.elemento.Attachable;
 import org.jboss.elemento.IsElement;
@@ -240,7 +242,24 @@ public class SearchBox implements IsElement<HTMLElement>, Attachable {
             }
         });
         
-        root.appendChild(suggestBoxDiv);
+        Card card = Card.create("Navigation","")
+                .setId("searchCard")
+                .setCollapsible()
+                .setHeaderBackground(Color.GREY_LIGHTEN_5)
+                .style().setColor("#333333").get()
+                .appendChild(suggestBoxDiv);
+        
+        // Heuristisch (+/- iPhone SE/5)
+        if (body().element().clientHeight < 600) {
+            card.collapse();
+        }
+        
+//        root.appendChild(suggestBoxDiv);
+        root.appendChild(card.element());
+        
+        console.log(body().element().clientHeight);
+        console.log(root.clientWidth);
+
     }        
     
     @Override
