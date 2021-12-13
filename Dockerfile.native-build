@@ -26,4 +26,7 @@ COPY --from=1 --chown=1001:root /home/standortkarte/ch.so.agi.standortkarte.appl
 EXPOSE 8080
 USER 1001
 
+#Log4j 2 CVE-2021-44228
+ENV LOG4J_FORMAT_MSG_NO_LOOKUPS=true
+
 CMD ["./application"]
