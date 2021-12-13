@@ -22,4 +22,6 @@ COPY --from=builder /home/app/application/ ./
 RUN chown -R 1001:0 /home/app && \
     chmod -R g=u /home/app
 USER 1001
+#Log4j 2 CVE-2021-44228
+ENV LOG4J_FORMAT_MSG_NO_LOOKUPS=true
 ENTRYPOINT ["/usr/lib/jvm/spring-boot-runtime/bin/java" ,"-XX:MaxRAMPercentage=80.0", "-noverify", "-XX:TieredStopAtLevel=1", "org.springframework.boot.loader.JarLauncher"]
