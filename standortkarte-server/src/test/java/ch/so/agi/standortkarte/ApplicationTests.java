@@ -26,7 +26,7 @@ class ApplicationTests {
     @Test
     public void index_with_egid_Ok() throws Exception {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/index.html?egid=2122818", String.class))
-                .contains("Web GIS Client • Kanton Solothurn");
+                .contains("Standortkarte • Kanton Solothurn");
     }
 
 }
