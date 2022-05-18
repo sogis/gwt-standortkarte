@@ -287,7 +287,12 @@ public class App implements EntryPoint {
 
         // handle egrid from location parameter 
         if (Window.Location.getParameter("egid") != null) {
-            String egid = Window.Location.getParameter("egid").toString();
+            String egid = Window.Location.getParameter("egid");
+            String edid = Window.Location.getParameter("edid");
+//            if (Window.Location.getParameter("edid") ) {
+//                
+//            }
+//            String edid = Window.Location.getParameter("edid").toString();
 
             RequestInit requestInit = RequestInit.create();
             Headers headers = new Headers();
@@ -304,16 +309,31 @@ public class App implements EntryPoint {
                 JsArray<?> results = Js.cast(parsed.get("results"));
 
                 if (results.getLength() > 0) {
-                    JsPropertyMap<?> resultObj = Js.cast(results.getAt(0));
-                    JsPropertyMap properties = (JsPropertyMap) resultObj.get("properties");
+                    
+                    String strname_deinr = null;
+                    Integer dplz4 = null;
+                    String ggdename = null;
+                    Double easting = null;
+                    Double northing = null;
+                    
+                    for (int i=0; i<results.getLength(); i++) {
+                        JsPropertyMap<?> resultObj = Js.cast(results.getAt(i));
+                        JsPropertyMap properties = (JsPropertyMap) resultObj.get("properties");
 
-                    String strname_deinr = ((JsString) properties.get("strname_deinr")).normalize();
-                    int dplz4 = new Double(((JsNumber) properties.get("dplz4")).valueOf()).intValue();
-                    String ggdename = ((JsString) properties.get("ggdename")).normalize();
+                        strname_deinr = ((JsString) properties.get("strname_deinr")).normalize();
+                        dplz4 = new Double(((JsNumber) properties.get("dplz4")).valueOf()).intValue();
+                        ggdename = ((JsString) properties.get("ggdename")).normalize();
 
-                    double easting = new Double(((JsNumber) properties.get("dkode")).valueOf());
-                    double northing = new Double(((JsNumber) properties.get("dkodn")).valueOf());
+                        easting = new Double(((JsNumber) properties.get("dkode")).valueOf());
+                        northing = new Double(((JsNumber) properties.get("dkodn")).valueOf());
 
+                        if (edid != null) {
+                            if (((JsString) properties.get("edid")).normalize().equalsIgnoreCase(edid)) {
+                                break;
+                            }
+                        }
+                    }
+                    
                     // add popup                    
                     HtmlContentBuilder popupBuilder = div().id("popup");
                     popupBuilder.add(span().innerHtml(SafeHtmlUtils.fromTrustedString(strname_deinr+"<br>"+dplz4+"&nbsp;"+ggdename)));

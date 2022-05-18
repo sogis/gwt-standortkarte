@@ -257,8 +257,8 @@ public class SearchBox implements IsElement<HTMLElement>, Attachable {
 //        root.appendChild(suggestBoxDiv);
         root.appendChild(card.element());
         
-        console.log(body().element().clientHeight);
-        console.log(root.clientWidth);
+//        console.log(body().element().clientHeight);
+//        console.log(root.clientWidth);
 
     }        
     

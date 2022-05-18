@@ -65,4 +65,5 @@ docker run -e TZ=Europe/Zurich -e SPRING_PROFILES_ACTIVE=prod -p 8080:8080 sogis
 
 ```
 http://localhost:8080/index.html?egid=2122818
+http://localhost:8080/index.html?egid=1766088&edid=1
 ```
