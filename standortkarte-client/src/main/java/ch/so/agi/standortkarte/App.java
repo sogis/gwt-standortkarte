@@ -288,12 +288,19 @@ public class App implements EntryPoint {
         // handle egrid from location parameter 
         if (Window.Location.getParameter("egid") != null) {
             String egid = Window.Location.getParameter("egid");
-            String edid = Window.Location.getParameter("edid");
-//            if (Window.Location.getParameter("edid") ) {
-//                
-//            }
-//            String edid = Window.Location.getParameter("edid").toString();
 
+            String edid;
+            if (egid.contains("|")) {
+                String[] params = egid.split("\\|");
+                egid = params[0];
+                edid = params[1];
+            } else {
+                edid = Window.Location.getParameter("edid");
+            }
+
+//            console.log(egid);
+//            console.log(edid);
+            
             RequestInit requestInit = RequestInit.create();
             Headers headers = new Headers();
             headers.append("Content-Type", "application/x-www-form-urlencoded");
